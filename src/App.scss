@@ -1,0 +1,28 @@
+$main-color: rgb(224, 163, 22);
+$primary-color: $main-color;
+
+@import '~loaders.css/src/animations/pacman.scss';
+
+*,
+body {
+  box-sizing: border-box;
+}
+
+.App {
+  text-align: center;
+}
+
+.loader {
+  height: 100vh;
+  &-hidden {
+    display: none;
+  }
+
+  &-active {
+    display: flex;
+  }
+
+  & > div {
+    margin: auto;
+  }
+}
