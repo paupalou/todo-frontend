@@ -1,32 +1,44 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useCallback, useContext} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+
+import { SocketContext } from './App';
+import NewTodo from './NewTodo';
 
 function UserFrontPage() {
-  const [todos, setTodos] = useState([]);
-  const fetchTodos = async () => {
+  const socket = useContext(SocketContext);
+  const user = useSelector(state => state.user);
+  const todos = useSelector(state => state.todos);
+  const dispatch = useDispatch();
+
+  const fetchTodos = useCallback(async () => {
     const request = await fetch('/api/todos');
     if (request.ok) {
       const userTodos = await request.json();
-      setTodos(userTodos);
+      dispatch({type: 'TODOS#GET', todos: userTodos});
     }
-  };
+  }, [dispatch]);
 
-  const deleteTodo = async (todoId) => {
-    const request = await fetch(`/api/todos/${todoId}`, {
-      method: 'DELETE'
+  const deleteTodo = todoId =>
+    fetch(`/api/todos/${todoId}`, {
+      method: 'DELETE',
     });
 
+  const logout = async () => {
+    const request = await fetch('/api/logout');
     if (request.ok) {
-      setTodos(todos.filter(todo => todo._id !== todoId));
+      socket.emit('leave', user.userId);
+      dispatch({type: 'LOGOUT'});
     }
   }
 
   useEffect(() => {
     fetchTodos();
-  }, []);
+  }, [fetchTodos]);
 
   return (
     <div>
-      User Front Page
+      {user.username}
+      <button onClick={logout}>logout</button>
       <p>TODOS</p>
       <ul>
         {todos.map(todo => (
@@ -36,6 +48,7 @@ function UserFrontPage() {
           </li>
         ))}
       </ul>
+      <NewTodo />
     </div>
   );
 }

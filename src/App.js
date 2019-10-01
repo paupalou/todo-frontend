@@ -1,5 +1,5 @@
-import React, {useState, useEffect, useCallback} from 'react';
-import {useDispatch} from 'react-redux';
+import React, {useState, useEffect, useCallback, createContext} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import io from 'socket.io-client';
 import Loader from 'react-loaders';
 
@@ -8,58 +8,61 @@ import UserFrontPage from './UserFrontPage';
 
 import './App.scss';
 
-const useSocketListener = () => {
-  const dispatch = useDispatch();
+const SocketContext = createContext();
 
-  const reportSocketConnection = useCallback(
-    () => dispatch({type: 'SOCKET-CONNECTED'}),
-    [dispatch],
-  );
+const useSocketListener = dispatch => {
+  const [socket] = useState(() => {
+    const socketServer = io.connect('http://localhost:3333');
+    socketServer.on('TODO#CREATE', todo =>
+      dispatch({type: 'TODOS#CREATE', todo}),
+    );
 
-  const reportLogin = useCallback(user => dispatch({type: 'LOGIN', user}), [
-    dispatch,
-  ]);
+    socketServer.on('TODO#DELETE', todoId =>
+      dispatch({type: 'TODOS#DELETE', todoId}),
+    );
 
-  const reportTokenUse = useCallback(
-    user => dispatch({type: 'USE-TOKEN', user}),
-    [dispatch],
-  );
+    return socketServer;
+  });
 
-  useEffect(() => {
-    const socket = io.connect('http://localhost:3333');
-    socket.on('ACTION/SOCKET-CONNECTED', _ => reportSocketConnection());
-    socket.on('ACTION/LOGIN', ({user}) => reportLogin(user));
-    socket.on('ACTION/USE-TOKEN', ({user}) => reportTokenUse(user));
-  }, [reportLogin, reportSocketConnection, reportTokenUse]);
+  return socket;
 };
 
-const useTokenValidation = () => {
-  const [userLogged, setUserLogged] = useState();
-  const validateToken = async () => {
+const useTokenValidation = (dispatch, socket) => {
+  const [userChecked, setUserChecked] = useState(false);
+  const user = useSelector(state => state.user);
+
+  const validateToken = useCallback(async () => {
     const result = await fetch('/api/token/validate');
-    setTimeout(() => setUserLogged(result.ok), 2000);
-  };
+    if (result.ok) {
+      const user = await result.json();
+      socket.emit('join', user.userId);
+      dispatch({type: 'LOGIN#TOKEN', user});
+    }
+    setUserChecked(true);
+  }, [socket, dispatch]);
 
   useEffect(() => {
     validateToken();
-  }, []);
+  }, [validateToken]);
 
-  return userLogged;
+  return [Object.keys(user).length > 0, userChecked];
 };
 
 function App() {
-  useSocketListener();
-  const userLogged = useTokenValidation();
+  const dispatch = useDispatch();
+  const socket = useSocketListener(dispatch);
+  const [userLogged, userChecked] = useTokenValidation(dispatch, socket);
 
-  if (typeof userLogged === 'undefined') {
+  if (!userChecked) {
     return <Loader type="pacman" />;
   }
 
-  if (userLogged) {
-    return <UserFrontPage />;
-  }
+  const component = userLogged ? <UserFrontPage /> : <FormLogin />;
 
-  return <FormLogin />;
+  return (
+    <SocketContext.Provider value={socket}>{component}</SocketContext.Provider>
+  );
 }
 
+export {SocketContext};
 export default App;

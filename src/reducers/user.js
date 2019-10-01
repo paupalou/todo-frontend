@@ -1,17 +1,17 @@
 import {createReducer} from 'redux-starter-kit';
 
+const reportUser = (state, action) => {
+  const {userId, username} = action.user;
+  state.userId = userId;
+  state.username = username;
+};
+
 const userReducer = createReducer(
   {},
   {
-    'SOCKET-CONNECTED': state => {
-      state.socketConnected = true;
-    },
-    'USE-TOKEN': (state, action) => {
-      state.user = action.user;
-    },
-    LOGIN: (state, action) => {
-      state.user = action.user;
-    },
+    LOGOUT: _ => ({}),
+    'LOGIN#USERNAME': reportUser,
+    'LOGIN#TOKEN': reportUser,
   },
 );
 
