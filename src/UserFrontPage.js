@@ -1,7 +1,9 @@
 import React, {useEffect, useCallback, useContext} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 
-import { SocketContext } from './App';
+import {SocketContext} from './App';
+import TopBar from './components/TopBar';
+import ToDoList from './components/ToDoList';
 import NewTodo from './NewTodo';
 
 function UserFrontPage() {
@@ -29,7 +31,7 @@ function UserFrontPage() {
       socket.emit('leave', user.userId);
       dispatch({type: 'LOGOUT'});
     }
-  }
+  };
 
   useEffect(() => {
     fetchTodos();
@@ -37,17 +39,8 @@ function UserFrontPage() {
 
   return (
     <div>
-      {user.username}
-      <button onClick={logout}>logout</button>
-      <p>TODOS</p>
-      <ul>
-        {todos.map(todo => (
-          <li>
-            {todo.title}
-            <button onClick={() => deleteTodo(todo._id)}>delete</button>
-          </li>
-        ))}
-      </ul>
+      <TopBar username={user.username} logout={logout} />
+      <ToDoList todos={todos} deleteTodo={deleteTodo} />
       <NewTodo />
     </div>
   );

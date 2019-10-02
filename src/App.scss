@@ -1,7 +1,22 @@
 $main-color: rgb(224, 163, 22);
+$secondary-color: rgb(84,121,128);
+$pretty--color-default: $secondary-color;
+$pretty--color-primary: rgb(157,224,173);
+$pretty--color-success: $main-color;
 $primary-color: $main-color;
 
+@import url('https://fonts.googleapis.com/css?family=Righteous&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Cabin:400,600&display=swap');
+
 @import '~loaders.css/src/animations/pacman.scss';
+@import "~pretty-checkbox/src/scss/variables";
+@import "~pretty-checkbox/src/scss/core";
+@import "~pretty-checkbox/src/scss/extras/colors";
+@import "~pretty-checkbox/src/scss/extras/curve";
+@import "~pretty-checkbox/src/scss/elements/default/fill";
+@import "~pretty-checkbox/src/scss/elements/default/outline";
+@import "~pretty-checkbox/src/scss/elements/default/thick";
+@import '~pretty-checkbox/src/scss/extras/animation';
 
 *,
 body {
