@@ -16,7 +16,7 @@ const ToDoListTitle = styled.h2`
 
 const ToDo = styled.article`
   color: rgb(89,79,79);
-  padding: 0.25em 0.5em;
+  padding: 0.25em 1em;
   font-family: 'Cabin', sans-serif;
   font-size: 1.25em;
   font-weight: 600;

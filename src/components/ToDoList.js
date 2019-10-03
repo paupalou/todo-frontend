@@ -17,7 +17,7 @@ const ToDoList = ({todos, deleteTodo}) => {
     <ToDoListContainer>
       <ToDoListTitle>To Do</ToDoListTitle>
       {todos.map(todo => (
-        <ToDo>
+        <ToDo key={todo._id}>
           <Checkbox {...checkboxProps}>{todo.title}</Checkbox>
           <FontAwesomeIcon
             className="delete"
