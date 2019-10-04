@@ -34,9 +34,20 @@ const NewTodo = () => {
     <>
       <Dialog isOpen={dialogOpen} close={() => setDialogOpen(false)}>
         <FormNewTodo onSubmit={createTodo}>
-          title{' '}
-          <input type="text" onChange={e => setTodoTitle(e.target.value)} />
-          text <input type="text" onChange={e => setTodoText(e.target.value)} />
+          <label for="title">title</label>
+          <input
+            type="text"
+            name="title"
+            onChange={e => setTodoTitle(e.target.value)}
+          />
+
+          <label for="text">text</label>
+          <textarea
+            name="text"
+            rows={10}
+            onChange={e => setTodoText(e.target.value)}
+          />
+
           <button type="submit">create</button>
         </FormNewTodo>
       </Dialog>

@@ -1,40 +1,62 @@
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 
-const slide = keyframes`
-  0% {
-    transform: translateY(0);
+const calcHeight = ({isOpen, animationFinished}) => {
+  if (isOpen) {
+    return '100%';
   }
 
-  100% {
-    transform: translateY(-1000px);
-    top: 0%;
+  if (animationFinished || typeof animationFinished === 'undefined') {
+    return '0%';
   }
-`;
 
-  // animation: ${slide} 0.5s cubic-bezier(1, -0.5, 0.5, 1);
+  return '100%';
+};
+
+const calcOver = ({isOpen, animationFinished}) => {
+  if (isOpen) {
+    return 'auto';
+  }
+
+  if (animationFinished) {
+    return 'hidden';
+  }
+
+  return 'auto';
+};
+
+const calcTop = ({isOpen}) =>
+  isOpen ? `${window.scrollY}px` : `${(window.innerHeight + window.scrollY)}px`;
+
 const DialogContainer = styled.div`
+  z-index: 1;
   position: absolute;
+  display: flex;
   width: 100%;
   background-color: white;
-  top: ${props => props.isOpen ? '0%': '100%'};
-  height: ${props => props.isOpen ? '100%': '0px'};
-  overflow:hidden;
-  transition: top 1s ease;
+  top: ${props => calcTop(props)};
+  transition: top ${props => props.animationDuration}s
+    cubic-bezier(0.97, 0.01, 0, 0.98);
+
+  height: ${props => calcHeight(props)};
+  overflow: ${props => calcOver(props)};
+
+  *:first-child {
+    flex-grow: 1;
+  }
 
   & > svg {
     &.close {
-      position: fixed;
-      top: 1em;
-      right: 1em;
-      color: rgb(89,79,79);
+      flex-basis: 30px;
+      color: rgb(89, 79, 79);
+      margin-top: 1em;
+      margin-right: 1em;
     }
 
     &:hover {
       cursor: pointer;
-      color: rgb(89,79,79);
       transform: rotate(-5deg) scale(1.25);
     }
   }
 `;
 
-export { DialogContainer };
+export {DialogContainer};
