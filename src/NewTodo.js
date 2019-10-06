@@ -1,23 +1,30 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus} from '@fortawesome/free-solid-svg-icons';
 
 import Dialog from './components/Dialog';
-import {Button} from './components/FloatingButton.styled';
+import FloatingButton from './components/FloatingButton.styled';
 import {FormNewTodo} from './components/NewTodo.styled';
-
-const FloatingButton = props => {
-  return (
-    <Button {...props}>
-      <FontAwesomeIcon icon={faPlus} />
-    </Button>
-  );
-};
+import Button from './components/Button.styled';
 
 const NewTodo = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [todoTitle, setTodoTitle] = useState();
-  const [todoText, setTodoText] = useState();
+  const [done, setDone] = useState(false);
+  const [todoTitle, setTodoTitle] = useState('');
+  const [todoText, setTodoText] = useState('');
+
+  useEffect(() => {
+    if (done) {
+      setTimeout(setDone(false), 2000);
+    }
+  }, [done]);
+
+  useEffect(() => {
+    if (!dialogOpen) {
+      setTodoTitle('');
+      setTodoText('');
+    }
+  }, [dialogOpen]);
 
   const createTodo = async event => {
     event.preventDefault();
@@ -28,31 +35,40 @@ const NewTodo = () => {
         'Content-Type': 'application/json',
       },
     });
+
+    setDone(true);
   };
 
   return (
     <>
-      <Dialog isOpen={dialogOpen} close={() => setDialogOpen(false)}>
+      <Dialog
+        isOpen={dialogOpen}
+        done={done}
+        close={() => setDialogOpen(false)}>
         <FormNewTodo onSubmit={createTodo}>
-          <label for="title">title</label>
+          <label htmlFor="title">title</label>
           <input
             type="text"
             name="title"
+            value={todoTitle}
             onChange={e => setTodoTitle(e.target.value)}
           />
 
-          <label for="text">text</label>
+          <label htmlFor="text">text</label>
           <textarea
             name="text"
             rows={10}
+            value={todoText}
             onChange={e => setTodoText(e.target.value)}
           />
 
-          <button type="submit">create</button>
+          <Button type="submit">create</Button>
         </FormNewTodo>
       </Dialog>
 
-      <FloatingButton onClick={() => setDialogOpen(true)} />
+      <FloatingButton onClick={() => setDialogOpen(true)}>
+        <FontAwesomeIcon icon={faPlus} />
+      </FloatingButton>
     </>
   );
 };

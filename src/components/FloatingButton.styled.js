@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const Button = styled.button`
+const FloatingButton = styled.button`
   appearance: push-button;
   position: fixed;
   width: 40px;
@@ -27,4 +27,4 @@ const Button = styled.button`
   }
 `;
 
-export {Button};
+export default FloatingButton;
