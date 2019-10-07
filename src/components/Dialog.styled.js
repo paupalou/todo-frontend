@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import widthContainer from './App.styled';
 
-const calcHeight = ({isOpen, animationFinished}) => {
+const calcHeight = ({ isOpen, animationFinished }) => {
   if (isOpen) {
     return '100%';
   }
@@ -14,7 +14,7 @@ const calcHeight = ({isOpen, animationFinished}) => {
   return '100%';
 };
 
-const calcOver = ({isOpen, animationFinished}) => {
+const calcOver = ({ isOpen, animationFinished }) => {
   if (isOpen) {
     return 'auto';
   }
@@ -26,8 +26,8 @@ const calcOver = ({isOpen, animationFinished}) => {
   return 'auto';
 };
 
-const calcTop = ({isOpen}) =>
-  isOpen ? `${window.scrollY}px` : `${(window.innerHeight + window.scrollY)}px`;
+const calcTop = ({ isOpen }) =>
+  isOpen ? `${window.scrollY}px` : `${window.innerHeight + window.scrollY}px`;
 
 const DialogContainer = styled.div`
   z-index: 1;
@@ -65,4 +65,4 @@ const DialogContainer = styled.div`
   }
 `;
 
-export {DialogContainer};
+export { DialogContainer };

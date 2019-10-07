@@ -1,10 +1,10 @@
-import React, {useState, useEffect, useCallback} from 'react';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faTimes} from '@fortawesome/free-solid-svg-icons';
+import React, { useState, useEffect, useCallback } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
-import {DialogContainer} from './Dialog.styled';
+import { DialogContainer } from './Dialog.styled';
 
-const Dialog = ({isOpen, children, close, done, animationDuration = 0.5}) => {
+const Dialog = ({ isOpen, children, close, done, animationDuration = 0.5 }) => {
   const [animationFinished, setAnimationFinished] = useState();
 
   const controlledClosed = useCallback(() => {
@@ -33,7 +33,7 @@ const Dialog = ({isOpen, children, close, done, animationDuration = 0.5}) => {
     }
 
     if (!isOpen && animationFinished) {
-       document.body.style.overflow = 'auto';
+      document.body.style.overflow = 'auto';
     }
   }, [isOpen, animationFinished]);
 
@@ -41,7 +41,8 @@ const Dialog = ({isOpen, children, close, done, animationDuration = 0.5}) => {
     <DialogContainer
       isOpen={isOpen}
       animationFinished={animationFinished}
-      animationDuration={animationDuration}>
+      animationDuration={animationDuration}
+    >
       <section>{children}</section>
       <FontAwesomeIcon
         className="close"

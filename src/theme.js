@@ -1,6 +1,6 @@
 import React from 'react';
 import { ThemeProvider } from 'styled-components';
-import {darken} from 'polished';
+import { darken } from 'polished';
 
 const Theme = ({ children }) => {
   const theme = {
@@ -15,11 +15,7 @@ const Theme = ({ children }) => {
     boxBorder: '2px solid lightgray'
   };
 
-  return (
-    <ThemeProvider theme={theme}>
-      {children}
-    </ThemeProvider>
-  );
-}
+  return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
+};
 
 export default Theme;

@@ -11,7 +11,6 @@ const FormContainer = styled.form`
   & > section.bigLogo {
     & > * {
       display: block;
-
     }
     & > span {
       text-align: center;
@@ -29,19 +28,20 @@ const FormContainer = styled.form`
   }
 
   & > input {
-    &[name="title"] {
+    &[name='title'] {
       margin-bottom: 1.5em;
     }
   }
 
   & > textarea {
     resize: none;
-    &[name="text"] {
+    &[name='text'] {
       margin-bottom: 1.5em;
     }
   }
 
-  & > input, textarea {
+  & > input,
+  textarea {
     font-size: 1em;
     border-radius: 5px;
     padding: 0.25em;

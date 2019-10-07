@@ -1,10 +1,10 @@
 import React from 'react';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faUserCircle, faSignOutAlt} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserCircle, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 
-import {TopBarContainer, UserName} from './TopBar.styled';
+import { TopBarContainer, UserName } from './TopBar.styled';
 
-const TopBar = ({username, logout}) => {
+const TopBar = ({ username, logout }) => {
   return (
     <TopBarContainer>
       <section>

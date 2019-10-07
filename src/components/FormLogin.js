@@ -1,15 +1,15 @@
-import React, {useState, useContext} from 'react';
-import {useDispatch} from 'react-redux';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import React, { useState, useContext } from 'react';
+import { useDispatch } from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faTasks,
   faEdit,
   faThumbsUp,
-  faSadTear,
+  faSadTear
 } from '@fortawesome/free-solid-svg-icons';
 
-import {SocketContext} from './../App';
-import {TopBarContainer} from './TopBar.styled';
+import { SocketContext } from './../App';
+import { TopBarContainer } from './TopBar.styled';
 import FormContainer from './Form.styled';
 import Button from './Button.styled';
 
@@ -29,16 +29,16 @@ function FormLogin() {
     event.preventDefault();
     const loginResponse = await fetch('/api/login', {
       method: 'POST',
-      body: JSON.stringify({username}),
+      body: JSON.stringify({ username }),
       headers: {
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     });
 
     if (loginResponse.ok) {
       const user = await loginResponse.json();
       socket.emit('join', user.userId);
-      dispatch({type: 'LOGIN#USERNAME', user});
+      dispatch({ type: 'LOGIN#USERNAME', user });
     }
   };
 
@@ -47,14 +47,14 @@ function FormLogin() {
 
     const createResponse = await fetch('/api/users', {
       method: 'POST',
-      body: JSON.stringify({username}),
+      body: JSON.stringify({ username }),
       headers: {
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     });
 
     if (createResponse.ok) {
-      dispatch({type: 'CREATE#USER', username});
+      dispatch({ type: 'CREATE#USER', username });
       setErrorOccurred(false);
       setUserCreated(true);
     } else {
@@ -82,7 +82,7 @@ function FormLogin() {
   return (
     <>
       <TopBarContainer>
-        <section style={{textAlign: 'center'}}>
+        <section style={{ textAlign: 'center' }}>
           <FontAwesomeIcon icon={faTasks} size="lg" />
           <span className="appTitle">TODO APP</span>
         </section>

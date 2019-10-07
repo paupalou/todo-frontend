@@ -1,4 +1,4 @@
-import {css} from 'styled-components';
+import { css } from 'styled-components';
 
 const widthContainer = css`
   max-width: 800px;

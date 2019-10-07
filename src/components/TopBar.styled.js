@@ -5,7 +5,7 @@ import widthContainer from './App.styled';
 const TopBarContainer = styled.nav`
   font-family: ${props => props.theme.secondaryFont};
   height: 5%;
-  padding: .5em;
+  padding: 0.5em;
   color: ${props => props.theme.foreground};
   background-color: ${props => props.theme.background};
 
@@ -25,7 +25,7 @@ const TopBarContainer = styled.nav`
 
 const UserName = styled.span`
   font-size: 1.25em;
-  margin-left: .5em;
-`
+  margin-left: 0.5em;
+`;
 
 export { TopBarContainer, UserName };

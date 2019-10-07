@@ -1,6 +1,6 @@
-import React, {useState, useEffect} from 'react';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faPlus} from '@fortawesome/free-solid-svg-icons';
+import React, { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 import Dialog from './Dialog';
 import FloatingButton from './FloatingButton.styled';
@@ -30,10 +30,10 @@ const NewTodo = () => {
     event.preventDefault();
     await fetch('/api/todos', {
       method: 'POST',
-      body: JSON.stringify({title: todoTitle, text: todoText}),
+      body: JSON.stringify({ title: todoTitle, text: todoText }),
       headers: {
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     });
 
     setDone(true);
@@ -44,7 +44,8 @@ const NewTodo = () => {
       <Dialog
         isOpen={dialogOpen}
         done={done}
-        close={() => setDialogOpen(false)}>
+        close={() => setDialogOpen(false)}
+      >
         <FormContainer onSubmit={createTodo}>
           <label htmlFor="title">title</label>
           <input

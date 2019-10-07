@@ -1,4 +1,4 @@
-import {createReducer} from 'redux-starter-kit';
+import { createReducer } from 'redux-starter-kit';
 
 const todosReducer = createReducer([], {
   LOGOUT: _ => [],
@@ -13,7 +13,7 @@ const todosReducer = createReducer([], {
     todo.done = !todo.done;
   },
   'TODO#DELETE': (state, action) =>
-    state.filter(todo => todo._id !== action.todoId),
+    state.filter(todo => todo._id !== action.todoId)
 });
 
 export default todosReducer;
