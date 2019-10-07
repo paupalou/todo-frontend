@@ -1,30 +1,35 @@
 import styled from 'styled-components';
 
+import widthContainer from './App.styled';
+
 const ToDoListContainer = styled.section`
-  font-family: 'Cabin', sans-serif;
+  ${widthContainer};
+  font-family: ${props => props.theme.mainFont};
   & svg.delete:hover {
     cursor: pointer;
-    color: rgb(89,79,79);
+    color: ${props => props.theme.icons};
     transform: rotate(-5deg) scale(1.25);
   }
 `;
 
 const ToDoListTitle = styled.h2`
   padding: 0em 1em;
-  color: rgb(84,121,128);
-  font-family: 'Righteous', cursive;
+  color: ${props => props.theme.titles};
+  font-family: ${props => props.theme.secondaryFont};
 `
 
-const ToDo = styled.article`
-  color: rgb(89,79,79);
+const ToDoContainer = styled.article`
+  color: ${props => props.theme.icons};
   padding: 0.25em 1em;
   font-size: 1.25em;
   font-weight: 600;
 
   & > p {
-    font-size: 0.6em;
-    color: rgb(69,173,168);
+    font-size: 0.7em;
+    margin-top: 0.25em;
+    padding: 0 2.2em;
+    color: ${props => props.theme.descriptions};
   }
 `
 
-export { ToDoListContainer, ToDoListTitle, ToDo };
+export { ToDoListContainer, ToDoListTitle, ToDoContainer };

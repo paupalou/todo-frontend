@@ -1,9 +1,15 @@
-$main-color: rgb(224, 163, 22);
-$secondary-color: rgb(84,121,128);
-$pretty--color-default: $secondary-color;
-$pretty--color-primary: rgb(157,224,173);
-$pretty--color-success: $main-color;
+// this is for loader
+$main-color: rgb(69,173,168);
+
 $primary-color: $main-color;
+$secondary-color: rgb(84,121,128);
+
+$pretty--color-default: $secondary-color;
+$pretty--color-primary: lightgray;
+$pretty--color-success: $main-color;
+$pretty--class-name: pretty;
+
+$icons-color: rgb(89, 79, 79);
 
 @import url('https://fonts.googleapis.com/css?family=Righteous&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Cabin:400,600&display=swap');
@@ -11,16 +17,35 @@ $primary-color: $main-color;
 @import '~loaders.css/src/animations/pacman.scss';
 @import "~pretty-checkbox/src/scss/variables";
 @import "~pretty-checkbox/src/scss/core";
+
+@import '~pretty-checkbox/src/scss/elements/svg/general';
+
+@import '~pretty-checkbox/src/scss/extras/plain';
+@import '~pretty-checkbox/src/scss/extras/animation';
 @import "~pretty-checkbox/src/scss/extras/colors";
 @import "~pretty-checkbox/src/scss/extras/curve";
-@import "~pretty-checkbox/src/scss/elements/default/fill";
-@import "~pretty-checkbox/src/scss/elements/default/outline";
-@import "~pretty-checkbox/src/scss/elements/default/thick";
-@import '~pretty-checkbox/src/scss/extras/animation';
+
+.#{$pretty--class-name}.custom-checkbox {
+  @extend .#{$pretty--class-name}.p-curve;
+  & .state label::before {
+    top: 0;
+    border: 2px solid $icons-color;
+    border-radius: 15%;
+    width: 1em;
+    height: 1em;
+    left: 2px;
+  }
+}
 
 *,
 body {
   box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .App {

@@ -7,15 +7,17 @@ import {TopBarContainer, UserName} from './TopBar.styled';
 const TopBar = ({username, logout}) => {
   return (
     <TopBarContainer>
-      <FontAwesomeIcon icon={faUserCircle} size="lg" />
-      <UserName>{username}</UserName>
-      <FontAwesomeIcon
-        icon={faSignOutAlt}
-        size="lg"
-        pull="right"
-        onClick={logout}
-        className="logout"
-      />
+      <section>
+        <FontAwesomeIcon icon={faUserCircle} size="lg" />
+        <UserName>{username}</UserName>
+        <FontAwesomeIcon
+          icon={faSignOutAlt}
+          size="lg"
+          pull="right"
+          onClick={logout}
+          className="logout"
+        />
+      </section>
     </TopBarContainer>
   );
 };

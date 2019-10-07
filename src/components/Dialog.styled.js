@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 
+import widthContainer from './App.styled';
+
 const calcHeight = ({isOpen, animationFinished}) => {
   if (isOpen) {
     return '100%';
@@ -31,6 +33,8 @@ const DialogContainer = styled.div`
   z-index: 1;
   position: absolute;
   display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
   width: 100%;
   background-color: white;
   top: ${props => calcTop(props)};
@@ -40,16 +44,18 @@ const DialogContainer = styled.div`
   height: ${props => calcHeight(props)};
   overflow: ${props => calcOver(props)};
 
-  *:first-child {
-    flex-grow: 1;
+  & > section {
+    ${widthContainer};
+    width: 100%;
   }
 
   & > svg {
     &.close {
       flex-basis: 30px;
-      color: rgb(89, 79, 79);
-      margin-top: 1em;
+      color: ${props => props.theme.icons};
+      margin-top: 0.5em;
       margin-right: 1em;
+      align-self: end;
     }
 
     &:hover {

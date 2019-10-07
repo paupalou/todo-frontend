@@ -1,19 +1,29 @@
 import styled from 'styled-components';
 
-const TopBarContainer = styled.div`
+import widthContainer from './App.styled';
+
+const TopBarContainer = styled.nav`
+  font-family: ${props => props.theme.secondaryFont};
   height: 5%;
   padding: .5em;
-  color: rgb(229,252,194);
-  background-color: rgb(69,173,168);
+  color: ${props => props.theme.foreground};
+  background-color: ${props => props.theme.background};
 
-  & > svg.logout:hover {
-    cursor: pointer;
-    color: rgb(89,79,79);
-    transform: rotate(-5deg) scale(1.25);
+  & > section {
+    ${widthContainer};
+    & > svg.logout:hover {
+      cursor: pointer;
+      color: ${props => props.theme.icons};
+      transform: rotate(-5deg) scale(1.25);
+    }
+
+    & > .appTitle {
+      margin-left: 1em;
+    }
   }
-`
+`;
+
 const UserName = styled.span`
-  font-family: 'Righteous', cursive;
   font-size: 1.25em;
   margin-left: .5em;
 `

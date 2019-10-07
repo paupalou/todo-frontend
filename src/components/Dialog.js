@@ -27,7 +27,6 @@ const Dialog = ({isOpen, children, close, done, animationDuration = 0.5}) => {
   }, [isOpen, animationDuration]);
 
   useEffect(() => {
-    console.log('nope');
     if (isOpen && animationFinished) {
       document.body.style.overflow = 'hidden';
       return;
@@ -36,14 +35,6 @@ const Dialog = ({isOpen, children, close, done, animationDuration = 0.5}) => {
     if (!isOpen && animationFinished) {
        document.body.style.overflow = 'auto';
     }
-
-    // if (animationFinished) {
-    //   setAnimationFinished(undefined);
-    //   document.body.style.overflow = 'auto';
-    // } else if (animationFinished === false) {
-    //   console.log('nope');
-    //   document.body.style.overflow = 'hidden';
-    // }
   }, [isOpen, animationFinished]);
 
   return (
@@ -51,10 +42,10 @@ const Dialog = ({isOpen, children, close, done, animationDuration = 0.5}) => {
       isOpen={isOpen}
       animationFinished={animationFinished}
       animationDuration={animationDuration}>
-      {children}
+      <section>{children}</section>
       <FontAwesomeIcon
         className="close"
-        size="lg"
+        size="2x"
         icon={faTimes}
         onClick={controlledClosed}
       />

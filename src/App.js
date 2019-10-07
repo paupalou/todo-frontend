@@ -3,8 +3,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import io from 'socket.io-client';
 import Loader from 'react-loaders';
 
-import FormLogin from './FormLogin';
-import UserFrontPage from './UserFrontPage';
+import FormLogin from './components/FormLogin';
+import UserFrontPage from './components/UserFrontPage';
 
 import './App.scss';
 
@@ -14,11 +14,15 @@ const useSocketListener = dispatch => {
   const [socket] = useState(() => {
     const socketServer = io.connect('http://localhost:3333');
     socketServer.on('TODO#CREATE', todo =>
-      dispatch({type: 'TODOS#CREATE', todo}),
+      dispatch({type: 'TODO#CREATE', todo}),
+    );
+
+    socketServer.on('TODO#TOGGLE', todoId =>
+      dispatch({type: 'TODO#TOGGLE', todoId}),
     );
 
     socketServer.on('TODO#DELETE', todoId =>
-      dispatch({type: 'TODOS#DELETE', todoId}),
+      dispatch({type: 'TODO#DELETE', todoId}),
     );
 
     return socketServer;
@@ -54,9 +58,11 @@ function App() {
   const [userLogged, userChecked] = useTokenValidation(dispatch, socket);
 
   if (!userChecked) {
-    return <Loader type="pacman" />;
+    document.body.style.overflow = 'hidden';
+    return <Loader type="pacman" style={{transform: 'scale(2)'}}/>;
   }
 
+  document.body.style.overflow = 'auto';
   const component = userLogged ? <UserFrontPage /> : <FormLogin />;
 
   return (

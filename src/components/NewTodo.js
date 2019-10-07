@@ -2,10 +2,10 @@ import React, {useState, useEffect} from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus} from '@fortawesome/free-solid-svg-icons';
 
-import Dialog from './components/Dialog';
-import FloatingButton from './components/FloatingButton.styled';
-import {FormNewTodo} from './components/NewTodo.styled';
-import Button from './components/Button.styled';
+import Dialog from './Dialog';
+import FloatingButton from './FloatingButton.styled';
+import FormContainer from './Form.styled';
+import Button from './Button.styled';
 
 const NewTodo = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -45,7 +45,7 @@ const NewTodo = () => {
         isOpen={dialogOpen}
         done={done}
         close={() => setDialogOpen(false)}>
-        <FormNewTodo onSubmit={createTodo}>
+        <FormContainer onSubmit={createTodo}>
           <label htmlFor="title">title</label>
           <input
             type="text"
@@ -63,7 +63,7 @@ const NewTodo = () => {
           />
 
           <Button type="submit">create</Button>
-        </FormNewTodo>
+        </FormContainer>
       </Dialog>
 
       <FloatingButton onClick={() => setDialogOpen(true)}>

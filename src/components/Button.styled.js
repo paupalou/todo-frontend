@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import {darken} from 'polished';
 
 const Button = styled.button`
   border-radius: 5px;
@@ -17,9 +16,13 @@ const Button = styled.button`
   width: 100%;
   margin-top: 0.75em;
 
-  background-color: rgb(69, 173, 168);
-  color: rgb(229, 252, 194);
-  box-shadow: 0 6px ${darken(0.1, 'rgb(69, 173, 168)')};
+  background-color: ${props => props.theme.background};
+  color: ${props => props.theme.foreground};
+  box-shadow: 0 6px ${props => props.theme.backgroundShadow};
+
+  &:disabled {
+    background-color: lightgray;
+  }
 
   &:after {
     content: '';
@@ -27,13 +30,13 @@ const Button = styled.button`
     z-index: -1;
   }
 
-  &:hover {
-    box-shadow: 0 4px ${darken(0.1, 'rgb(69, 173, 168)')};
+  &:hover:not([disabled]) {
+    box-shadow: 0 4px ${props => props.theme.backgroundShadow};
     top: 2px;
   }
 
-  &:active {
-    box-shadow: 0 0 ${darken(0.1, 'rgb(69, 173, 168)')};
+  &:active:not([disabled]) {
+    box-shadow: 0 0 ${props => props.theme.backgroundShadow};
     top: 6px;
   }
 `;

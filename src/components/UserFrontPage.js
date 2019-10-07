@@ -1,9 +1,9 @@
 import React, {useEffect, useCallback, useContext} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 
-import {SocketContext} from './App';
-import TopBar from './components/TopBar';
-import ToDoList from './components/ToDoList';
+import {SocketContext} from './../App';
+import TopBar from './TopBar';
+import ToDoList from './ToDoList';
 import NewTodo from './NewTodo';
 
 function UserFrontPage() {
@@ -16,7 +16,7 @@ function UserFrontPage() {
     const request = await fetch('/api/todos');
     if (request.ok) {
       const userTodos = await request.json();
-      dispatch({type: 'TODOS#GET', todos: userTodos});
+      dispatch({type: 'TODO#GET-ALL', todos: userTodos});
     }
   }, [dispatch]);
 
@@ -24,6 +24,8 @@ function UserFrontPage() {
     fetch(`/api/todos/${todoId}`, {
       method: 'DELETE',
     });
+
+  const toggleTodo = todoId => fetch(`/api/todos/${todoId}`, {method: 'PUT'});
 
   const logout = async () => {
     const request = await fetch('/api/logout');
@@ -38,11 +40,11 @@ function UserFrontPage() {
   }, [fetchTodos]);
 
   return (
-    <div>
+    <>
       <TopBar username={user.username} logout={logout} />
-      <ToDoList todos={todos} deleteTodo={deleteTodo} />
+      <ToDoList todos={todos} deleteTodo={deleteTodo} toggleTodo={toggleTodo} />
       <NewTodo />
-    </div>
+    </>
   );
 }
 
