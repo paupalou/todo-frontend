@@ -4,5 +4,7 @@
 nodejs
 
 ### Instructions
+```sh
 npm install
 npm run start
+```
