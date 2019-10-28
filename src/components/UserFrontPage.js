@@ -1,14 +1,27 @@
 import React, { useEffect, useCallback, useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useApolloClient } from '@apollo/react-hooks';
+import { gql } from 'apollo-boost';
 
 import { SocketContext } from './../App';
 import TopBar from './TopBar';
 import ToDoList from './ToDoList';
 import NewTodo from './NewTodo';
 
-function UserFrontPage() {
+function UserFrontPage({ setUserLogged }) {
   const socket = useContext(SocketContext);
-  const user = useSelector(state => state.user);
+  const client = useApolloClient();
+  const { user } = client.readQuery({
+    query: gql`
+      query GetUser {
+        user {
+          username
+          userId
+        }
+      }
+    `
+  });
+
   const todos = useSelector(state => state.todos);
   const dispatch = useDispatch();
 
@@ -33,6 +46,7 @@ function UserFrontPage() {
       socket.emit('leave', user.userId);
       dispatch({ type: 'LOGOUT' });
     }
+    setUserLogged(false);
   };
 
   useEffect(() => {

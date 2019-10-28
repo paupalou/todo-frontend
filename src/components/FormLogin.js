@@ -1,5 +1,4 @@
 import React, { useState, useContext } from 'react';
-import { useDispatch } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faTasks,
@@ -7,17 +6,31 @@ import {
   faThumbsUp,
   faSadTear
 } from '@fortawesome/free-solid-svg-icons';
+import { useLazyQuery, useApolloClient } from '@apollo/react-hooks';
+import { gql } from 'apollo-boost';
 
 import { SocketContext } from './../App';
 import { TopBarContainer } from './TopBar.styled';
 import FormContainer from './Form.styled';
 import Button from './Button.styled';
 
-function FormLogin() {
-  const dispatch = useDispatch();
+const LOGIN_QUERY = gql`
+  query login($username: String!) {
+    login(username: $username) {
+      username
+      userId
+    }
+  }
+`;
+
+function FormLogin({ setUserLogged }) {
   const [username, setUsername] = useState();
   const [userCreated, setUserCreated] = useState(false);
   const [errorOccurred, setErrorOccurred] = useState(false);
+  const client = useApolloClient();
+  const [call, { loading, data }] = useLazyQuery(LOGIN_QUERY, {
+    fetchPolicy: 'network-only'
+  });
   const socket = useContext(SocketContext);
 
   const changeUsername = event => {
@@ -27,20 +40,31 @@ function FormLogin() {
 
   const login = async event => {
     event.preventDefault();
-    const loginResponse = await fetch('/api/login', {
-      method: 'POST',
-      body: JSON.stringify({ username }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
+    call({ variables: { username } });
+    // const loginResponse = await fetch('/api/login', {
+    //   method: 'POST',
+    //   body: JSON.stringify({ username }),
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   }
+    // });
 
-    if (loginResponse.ok) {
-      const user = await loginResponse.json();
-      socket.emit('join', user.userId);
-      dispatch({ type: 'LOGIN#USERNAME', user });
-    }
+    // if (loginResponse.ok) {
+    //   const user = await loginResponse.json();
+    //   socket.emit('join', user.userId);
+    //   dispatch({ type: 'LOGIN#USERNAME', user });
+    // }
   };
+
+  if (data && data.login) {
+    // client.writeData({
+    //   data: {
+    //     user: { ...data.login }
+    //   }
+    // });
+    socket.emit('join', data.login.userId);
+    setUserLogged(true);
+  }
 
   const createUser = async event => {
     event.preventDefault();
@@ -54,7 +78,7 @@ function FormLogin() {
     });
 
     if (createResponse.ok) {
-      dispatch({ type: 'CREATE#USER', username });
+      // dispatch({ type: 'CREATE#USER', username });
       setErrorOccurred(false);
       setUserCreated(true);
     } else {

@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useCallback, createContext } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import io from 'socket.io-client';
 import Loader from 'react-loaders';
+import { useApolloClient, useLazyQuery } from '@apollo/react-hooks';
+import { gql } from 'apollo-boost';
 
 import FormLogin from './components/FormLogin';
 import UserFrontPage from './components/UserFrontPage';
@@ -31,39 +33,66 @@ const useSocketListener = dispatch => {
   return socket;
 };
 
-const useTokenValidation = (dispatch, socket) => {
-  const [userChecked, setUserChecked] = useState(false);
-  const user = useSelector(state => state.user);
-
-  const validateToken = useCallback(async () => {
-    const result = await fetch('/api/token/validate');
-    if (result.ok) {
-      const user = await result.json();
-      socket.emit('join', user.userId);
-      dispatch({ type: 'LOGIN#TOKEN', user });
+const TOKEN_VALIDATE = gql`
+  query tokenValidate {
+    tokenValidate {
+      username
+      userId
     }
-    setUserChecked(true);
-  }, [socket, dispatch]);
+  }
+`;
+
+const isTokenValid = response => {
+  if (!response) return false;
+  const user = response.tokenValidate;
+  return !!user;
+};
+
+const useTokenValidation = socket => {
+  const [userChecked, setUserChecked] = useState(false);
+  const [validate, { loading, error, data }] = useLazyQuery(TOKEN_VALIDATE, {
+    fetchPolicy: 'network-only'
+  });
 
   useEffect(() => {
-    validateToken();
-  }, [validateToken]);
+    validate();
+  }, []);
 
-  return [Object.keys(user).length > 0, userChecked];
+  useEffect(() => {
+    if (!data) return;
+    const user = data.tokenValidate;
+    if (user && user.userId) {
+      socket.emit('join', user.userId);
+      setUserChecked(true);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (error) {
+      setUserChecked(true);
+    }
+  }, [error]);
+
+  return [isTokenValid(data), userChecked];
 };
 
 function App() {
   const dispatch = useDispatch();
   const socket = useSocketListener(dispatch);
-  const [userLogged, userChecked] = useTokenValidation(dispatch, socket);
+  const [tokenValid, tokenChecked] = useTokenValidation(socket);
+  const [userLogged, setUserLogged] = useState(false);
 
-  if (!userChecked) {
+  if (!tokenChecked) {
     document.body.style.overflow = 'hidden';
     return <Loader type="pacman" style={{ transform: 'scale(2)' }} />;
   }
 
   document.body.style.overflow = 'auto';
-  const component = userLogged ? <UserFrontPage /> : <FormLogin />;
+  const component = (userLogged || tokenValid) ? (
+    <UserFrontPage setUserLogged={setUserLogged} />
+  ) : (
+    <FormLogin setUserLogged={setUserLogged} />
+  );
 
   return (
     <SocketContext.Provider value={socket}>{component}</SocketContext.Provider>
