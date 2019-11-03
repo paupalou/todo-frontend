@@ -1,6 +1,10 @@
-import React, { useEffect, useCallback, useContext } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useApolloClient } from '@apollo/react-hooks';
+import React, { useEffect, useState, useContext, useCallback } from 'react';
+import {
+  useApolloClient,
+  useQuery,
+  useLazyQuery,
+  useMutation
+} from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
 
 import { SocketContext } from './../App';
@@ -8,50 +12,91 @@ import TopBar from './TopBar';
 import ToDoList from './ToDoList';
 import NewTodo from './NewTodo';
 
+const LOGOUT = gql`
+  query {
+    logout
+  }
+`;
+
+const GET_TODOS = gql`
+  query {
+    getUserTodos {
+      id
+      title
+      text
+      created
+      done
+    }
+  }
+`;
+
+const DELETE_TODO = gql`
+  mutation deleteTodo($id: String!) {
+    deleteTodo(id: $id) {
+      id
+    }
+  }
+`;
+
 function UserFrontPage({ setUserLogged }) {
   const socket = useContext(SocketContext);
+
+  const [todos, setTodos] = useState([]);
+  const { data: todosData } = useQuery(GET_TODOS, {
+    fetchPolicy: 'network-only'
+  });
+
+  useEffect(() => {
+    if (todosData) {
+      setTodos(todosData.getUserTodos);
+    }
+  }, [todosData]);
+
+  const [deleteTodo, { data: deleteData }] = useMutation(DELETE_TODO);
+
+  useEffect(() => {
+    if (!deleteData) return;
+    const { deleteTodo } = deleteData;
+    if (deleteTodo && deleteTodo.id) {
+      setTodos(t => t.filter(todo => todo.id !== deleteTodo.id));
+    }
+  }, [deleteData]);
+
   const client = useApolloClient();
-  const { user } = client.readQuery({
+  const { tokenValidate: user } = client.readQuery({
     query: gql`
       query GetUser {
-        user {
+        tokenValidate {
+          id
           username
-          userId
         }
       }
     `
   });
 
-  const todos = useSelector(state => state.todos);
-  const dispatch = useDispatch();
+  console.log(user);
 
-  const fetchTodos = useCallback(async () => {
-    const request = await fetch('/api/todos');
-    if (request.ok) {
-      const userTodos = await request.json();
-      dispatch({ type: 'TODO#GET-ALL', todos: userTodos });
-    }
-  }, [dispatch]);
-
-  const deleteTodo = todoId =>
-    fetch(`/api/todos/${todoId}`, {
-      method: 'DELETE'
-    });
-
-  const toggleTodo = todoId => fetch(`/api/todos/${todoId}`, { method: 'PUT' });
-
-  const logout = async () => {
-    const request = await fetch('/api/logout');
-    if (request.ok) {
-      socket.emit('leave', user.userId);
-      dispatch({ type: 'LOGOUT' });
-    }
-    setUserLogged(false);
-  };
+  const [logout, { data: logoutData }] = useLazyQuery(LOGOUT, {
+    fetchPolicy: 'network-only'
+  });
 
   useEffect(() => {
-    fetchTodos();
-  }, [fetchTodos]);
+    if (logoutData) {
+      socket.emit('leave', user.id);
+      setUserLogged(false);
+
+      client.writeData({
+        data: {
+          tokenValidate: {
+            id: undefined,
+            username: undefined
+          }
+        }
+      });
+    }
+  }, [logoutData, setUserLogged, user, socket, client]);
+
+  const toggleTodo = todoId => fetch(`/api/todos/${todoId}`, { method: 'PUT' });
 
   return (
     <>

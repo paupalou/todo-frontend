@@ -37,12 +37,16 @@ const ToDo = ({ todo, toggleTodo, deleteTodo }) => {
     style: 'thick'
   };
 
+  const deleteAction = () => {
+    deleteTodo({ variables: { id: todo.id } });
+  };
+
   return (
-    <ToDoContainer key={todo._id}>
+    <ToDoContainer key={todo.id}>
       <Checkbox
         {...checkboxProps}
         plain
-        onChange={() => toggleTodo(todo._id)}
+        onChange={() => toggleTodo(todo.id)}
         checked={todo.done}
       >
         {todo.title}
@@ -51,7 +55,7 @@ const ToDo = ({ todo, toggleTodo, deleteTodo }) => {
         className="delete"
         icon={faTrashAlt}
         pull="right"
-        onClick={() => deleteTodo(todo._id)}
+        onClick={deleteAction}
       />
       <p>{todo.text}</p>
     </ToDoContainer>
@@ -64,7 +68,7 @@ const ToDoList = ({ todos, deleteTodo, toggleTodo }) => {
       <ToDoListTitle>To Do</ToDoListTitle>
       {todos.map(todo => (
         <ToDo
-          key={todo._id}
+          key={todo.id}
           todo={todo}
           deleteTodo={deleteTodo}
           toggleTodo={toggleTodo}

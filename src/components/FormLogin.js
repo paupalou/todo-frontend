@@ -6,7 +6,7 @@ import {
   faThumbsUp,
   faSadTear
 } from '@fortawesome/free-solid-svg-icons';
-import { useLazyQuery, useApolloClient } from '@apollo/react-hooks';
+import { useLazyQuery } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
 
 import { SocketContext } from './../App';
@@ -17,8 +17,8 @@ import Button from './Button.styled';
 const LOGIN_QUERY = gql`
   query login($username: String!) {
     login(username: $username) {
+      id
       username
-      userId
     }
   }
 `;
@@ -27,8 +27,7 @@ function FormLogin({ setUserLogged }) {
   const [username, setUsername] = useState();
   const [userCreated, setUserCreated] = useState(false);
   const [errorOccurred, setErrorOccurred] = useState(false);
-  const client = useApolloClient();
-  const [call, { loading, data }] = useLazyQuery(LOGIN_QUERY, {
+  const [call, { data }] = useLazyQuery(LOGIN_QUERY, {
     fetchPolicy: 'network-only'
   });
   const socket = useContext(SocketContext);
@@ -41,27 +40,9 @@ function FormLogin({ setUserLogged }) {
   const login = async event => {
     event.preventDefault();
     call({ variables: { username } });
-    // const loginResponse = await fetch('/api/login', {
-    //   method: 'POST',
-    //   body: JSON.stringify({ username }),
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   }
-    // });
-
-    // if (loginResponse.ok) {
-    //   const user = await loginResponse.json();
-    //   socket.emit('join', user.userId);
-    //   dispatch({ type: 'LOGIN#USERNAME', user });
-    // }
   };
 
   if (data && data.login) {
-    // client.writeData({
-    //   data: {
-    //     user: { ...data.login }
-    //   }
-    // });
     socket.emit('join', data.login.userId);
     setUserLogged(true);
   }

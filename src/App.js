@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useCallback, createContext } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState, useEffect, createContext } from 'react';
 import io from 'socket.io-client';
 import Loader from 'react-loaders';
-import { useApolloClient, useLazyQuery } from '@apollo/react-hooks';
+import { useQuery, useApolloClient } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
 
 import FormLogin from './components/FormLogin';
@@ -12,19 +11,25 @@ import './App.scss';
 
 const SocketContext = createContext();
 
-const useSocketListener = dispatch => {
+const useSocketListener = () => {
   const [socket] = useState(() => {
     const socketServer = io.connect('http://localhost:3333');
-    socketServer.on('TODO#CREATE', todo =>
-      dispatch({ type: 'TODO#CREATE', todo })
+    socketServer.on(
+      'TODO#CREATE',
+      todo => console.log('[todo created]: ', todo)
+      // dispatch({ type: 'TODO#CREATE', todo })
     );
 
-    socketServer.on('TODO#TOGGLE', todoId =>
-      dispatch({ type: 'TODO#TOGGLE', todoId })
+    socketServer.on(
+      'TODO#TOGGLE',
+      todoId => console.log('[todo toggled]: ', todoId)
+      // dispatch({ type: 'TODO#TOGGLE', todoId })
     );
 
-    socketServer.on('TODO#DELETE', todoId =>
-      dispatch({ type: 'TODO#DELETE', todoId })
+    socketServer.on(
+      'TODO#DELETE',
+      todoId => console.log('[todo deleted]: ', todoId)
+      // dispatch({ type: 'TODO#DELETE', todoId })
     );
 
     return socketServer;
@@ -34,65 +39,56 @@ const useSocketListener = dispatch => {
 };
 
 const TOKEN_VALIDATE = gql`
-  query tokenValidate {
+  query LoggedUser {
     tokenValidate {
+      id
       username
-      userId
     }
   }
 `;
 
-const isTokenValid = response => {
-  if (!response) return false;
-  const user = response.tokenValidate;
-  return !!user;
-};
-
-const useTokenValidation = socket => {
-  const [userChecked, setUserChecked] = useState(false);
-  const [validate, { loading, error, data }] = useLazyQuery(TOKEN_VALIDATE, {
+const useAuth = socket => {
+  const [userLogged, setUserLogged] = useState();
+  const { loading, error, data } = useQuery(TOKEN_VALIDATE, {
     fetchPolicy: 'network-only'
   });
 
   useEffect(() => {
-    validate();
-  }, []);
-
-  useEffect(() => {
     if (!data) return;
     const user = data.tokenValidate;
-    if (user && user.userId) {
-      socket.emit('join', user.userId);
-      setUserChecked(true);
+    if (user && user.id) {
+      setUserLogged(true);
+      socket.emit('join', user.id);
+
+      // client.writeData({ data: { ...user, __typename: 'User' } });
     }
-  }, [data]);
+  }, [data, socket]);
 
   useEffect(() => {
     if (error) {
-      setUserChecked(true);
+      setUserLogged(false);
     }
   }, [error]);
 
-  return [isTokenValid(data), userChecked];
+  return { userLogged, setUserLogged, loading };
 };
 
 function App() {
-  const dispatch = useDispatch();
-  const socket = useSocketListener(dispatch);
-  const [tokenValid, tokenChecked] = useTokenValidation(socket);
-  const [userLogged, setUserLogged] = useState(false);
-
-  if (!tokenChecked) {
-    document.body.style.overflow = 'hidden';
-    return <Loader type="pacman" style={{ transform: 'scale(2)' }} />;
-  }
+  // const dispatch = useDispatch();
+  const socket = useSocketListener();
+  const { userLogged, setUserLogged, loading } = useAuth(socket);
 
   document.body.style.overflow = 'auto';
-  const component = (userLogged || tokenValid) ? (
+  const component = userLogged ? (
     <UserFrontPage setUserLogged={setUserLogged} />
   ) : (
     <FormLogin setUserLogged={setUserLogged} />
   );
+
+  if (loading || typeof userLogged === 'undefined') {
+    document.body.style.overflow = 'hidden';
+    return <Loader type="pacman" style={{ transform: 'scale(2)' }} />;
+  }
 
   return (
     <SocketContext.Provider value={socket}>{component}</SocketContext.Provider>

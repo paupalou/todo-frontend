@@ -5,7 +5,6 @@ import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from '@apollo/react-hooks';
 
 import App from './App';
-import store from './store';
 import Theme from './theme';
 import * as serviceWorker from './serviceWorker';
 
@@ -13,24 +12,22 @@ const client = new ApolloClient({
   uri: '/api/graphql'
 });
 
-client.writeData({
-  data: {
-    user: {
-      __typename: 'User',
-      username: '',
-      userId: ''
-    }
-  }
-});
+// client.writeData({
+//   data: {
+//     user: {
+//       __typename: 'User',
+//       username: '',
+//       userId: ''
+//     }
+//   }
+// });
 
 ReactDOM.render(
-  <Provider store={store}>
-    <ApolloProvider client={client}>
-      <Theme>
-        <App />
-      </Theme>
-    </ApolloProvider>
-  </Provider>,
+  <ApolloProvider client={client}>
+    <Theme>
+      <App />
+    </Theme>
+  </ApolloProvider>,
   document.getElementById('root')
 );
 
